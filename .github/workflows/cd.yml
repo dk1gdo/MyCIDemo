@@ -1,4 +1,4 @@
-name: Cross-Platform Build & Release
+name: Cross-Platform Build & Release with README PR
 
 on:
   push:
@@ -98,7 +98,7 @@ jobs:
           Write-Host "new_tag=$NEW_TAG"
           echo "new_tag=$NEW_TAG" >> $env:GITHUB_OUTPUT
 
-      # Скачиваем артефакты с билдов для всех платформ
+      # Скачиваем артефакты
       - name: Download Windows artifact
         uses: actions/download-artifact@v4
         with:
@@ -128,32 +128,52 @@ jobs:
             ./publish/linux/*
             ./publish/mac/*
 
-      # Обновляем README.md с ссылками на все платформы
-      - name: Update README
+      # Обновляем README через Pull Request
+      - name: Create README update branch
+        id: readme-branch
         shell: pwsh
         run: |
-          $repo = "${{ github.repository }}"
           $tag = "${{ steps.tag.outputs.new_tag }}"
+          $branch = "update-readme/$tag"
+          git checkout -b $branch
+
+          $repo = "${{ github.repository }}"
           $readme = "README.md"
-      
+
           $winLink = "[Windows](https://github.com/$repo/releases/download/$tag/DemoCIProject.exe)"
           $linuxLink = "[Linux](https://github.com/$repo/releases/download/$tag/DemoCIProject)"
           $macLink = "[Mac](https://github.com/$repo/releases/download/$tag/DemoCIProject)"
           $newLinks = "### Скачать последнюю версию`n$winLink | $linuxLink | $macLink`n"
-      
-          $content = Get-Content $readme
-      
-          if ($content -notmatch "DemoCIProject") {
-          # Если ссылок ещё нет, добавляем в конец README
-          Add-Content -Path $readme -Value $newLinks
+
+          if (-Not (Test-Path $readme)) {
+              New-Item -Path $readme -ItemType File -Value $newLinks
           } else {
-            # Если ссылки есть, заменяем их
-            $pattern = '(https://github\.com/.*/releases/download/.*DemoCIProject(\.exe)?)'
-            ($content -replace $pattern, "$winLink | $linuxLink | $macLink") | Set-Content $readme
+              $content = Get-Content $readme
+              if ($content -notmatch "DemoCIProject") {
+                  Add-Content -Path $readme -Value $newLinks
+              } else {
+                  $pattern = '(https://github\.com/.*/releases/download/.*DemoCIProject(\.exe)?)'
+                  ($content -replace $pattern, "$winLink | $linuxLink | $macLink") | Set-Content $readme
+              }
           }
-      
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
+
           git add $readme
           git commit -m "Update download links to $tag" || Write-Host "No changes to commit"
-          git push
+          echo "branch_name=$branch" >> $env:GITHUB_OUTPUT
+
+      - name: Push README branch
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.readme-branch.outputs.branch_name }}
+
+      - name: Create Pull Request for README
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update download links to ${{ steps.tag.outputs.new_tag }}"
+          branch: ${{ steps.readme-branch.outputs.branch_name }}
+          title: "Update download links to ${{ steps.tag.outputs.new_tag }}"
+          body: "Автоматическое обновление ссылок на последнюю версию DemoCIProject"
+          base: main
+          labels: "auto-update"
