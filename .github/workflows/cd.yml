@@ -70,12 +70,14 @@ jobs:
       - name: Determine tag
         id: tag
         shell: pwsh
+        env:
+          VERSION_INPUT: ${{ github.event.inputs.version }}
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-          if (${{ github.event.inputs.version }} -ne '') {
-              $NEW_TAG = "v${{ github.event.inputs.version }}"
+          if ($env:VERSION_INPUT -ne '') {
+              $NEW_TAG = "v$env:VERSION_INPUT"
           } else {
               $LAST_TAG = git describe --tags --abbrev=0
               if (-not $LAST_TAG) { $LAST_TAG = "v0.0.0" }
