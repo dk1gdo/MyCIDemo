@@ -36,8 +36,8 @@ jobs:
 
       # 6. Публикуем exe
       - name: Publish exe
-        run: dotnet publish -c Release -r win-x64 --self-contained true --no-build -o ./publish
-
+        run: dotnet publish DemoCIProject/DemoCIProject.csproj -c Release -r win-x64 --self-contained true -o ./publish
+      
       # 7. Автоматически создаём новый тег
       - name: Create tag
         id: tag

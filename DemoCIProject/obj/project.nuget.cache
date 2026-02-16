@@ -1,8 +1,18 @@
 {
   "version": 2,
-  "dgSpecHash": "/CBY+dZh9JlMTguRCXqg9VDRzuqQHO9gvt7yn0MXN6UWO2xXr8CKfTHKtxVLIlSo3S1KBLcKFdLNz9QWW21BWw==",
+  "dgSpecHash": "XjLB0BoExwukyio2Fc2QmLxZ1X0Rh/UhFNHGIWrkPFGSu3LE/6o5pr+Dv2iKS0AZPZbbHlMXNRBC2zrmwZ8a8Q==",
   "success": true,
   "projectFilePath": "/Users/denis/RiderProjects/DemoCIProject/DemoCIProject/DemoCIProject.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/Users/denis/.nuget/packages/microsoft.netcore.app.runtime.win-x64/8.0.3/microsoft.netcore.app.runtime.win-x64.8.0.3.nupkg.sha512",
+    "/Users/denis/.nuget/packages/microsoft.netcore.app.runtime.linux-x64/8.0.3/microsoft.netcore.app.runtime.linux-x64.8.0.3.nupkg.sha512",
+    "/Users/denis/.nuget/packages/microsoft.netcore.app.runtime.osx-x64/8.0.3/microsoft.netcore.app.runtime.osx-x64.8.0.3.nupkg.sha512",
+    "/Users/denis/.nuget/packages/microsoft.aspnetcore.app.runtime.win-x64/8.0.3/microsoft.aspnetcore.app.runtime.win-x64.8.0.3.nupkg.sha512",
+    "/Users/denis/.nuget/packages/microsoft.aspnetcore.app.runtime.linux-x64/8.0.3/microsoft.aspnetcore.app.runtime.linux-x64.8.0.3.nupkg.sha512",
+    "/Users/denis/.nuget/packages/microsoft.aspnetcore.app.runtime.osx-x64/8.0.3/microsoft.aspnetcore.app.runtime.osx-x64.8.0.3.nupkg.sha512",
+    "/Users/denis/.nuget/packages/microsoft.netcore.app.host.win-x64/8.0.3/microsoft.netcore.app.host.win-x64.8.0.3.nupkg.sha512",
+    "/Users/denis/.nuget/packages/microsoft.netcore.app.host.linux-x64/8.0.3/microsoft.netcore.app.host.linux-x64.8.0.3.nupkg.sha512",
+    "/Users/denis/.nuget/packages/microsoft.netcore.app.host.osx-x64/8.0.3/microsoft.netcore.app.host.osx-x64.8.0.3.nupkg.sha512"
+  ],
   "logs": []
 }
