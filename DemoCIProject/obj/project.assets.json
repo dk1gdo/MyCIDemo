@@ -1,7 +1,10 @@
 {
   "version": 3,
   "targets": {
-    "net8.0": {}
+    "net8.0": {},
+    "net8.0/linux-x64": {},
+    "net8.0/osx-x64": {},
+    "net8.0/win-x64": {}
   },
   "libraries": {},
   "projectFileDependencyGroups": {
@@ -55,12 +58,61 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Runtime.linux-x64",
+            "version": "[8.0.3, 8.0.3]"
+          },
+          {
+            "name": "Microsoft.AspNetCore.App.Runtime.osx-x64",
+            "version": "[8.0.3, 8.0.3]"
+          },
+          {
+            "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
+            "version": "[8.0.3, 8.0.3]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.linux-x64",
+            "version": "[8.0.3, 8.0.3]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.osx-x64",
+            "version": "[8.0.3, 8.0.3]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[8.0.3, 8.0.3]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Runtime.linux-x64",
+            "version": "[8.0.3, 8.0.3]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Runtime.osx-x64",
+            "version": "[8.0.3, 8.0.3]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Runtime.win-x64",
+            "version": "[8.0.3, 8.0.3]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
         "runtimeIdentifierGraphPath": "/Users/denis/.dotnet/sdk/8.0.203/PortableRuntimeIdentifierGraph.json"
+      }
+    },
+    "runtimes": {
+      "linux-x64": {
+        "#import": []
+      },
+      "osx-x64": {
+        "#import": []
+      },
+      "win-x64": {
+        "#import": []
       }
     }
   }
