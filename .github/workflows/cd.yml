@@ -123,10 +123,10 @@ jobs:
         with:
           tag: ${{ steps.tag.outputs.new_tag }}
           name: Release ${{ steps.tag.outputs.new_tag }}
-          artifacts: |
-            publish/linux/*
-            publish/mac/*
-            publish/win/*
+          files: |
+            ./publish/win/*
+            ./publish/linux/*
+            ./publish/mac/*
 
       # Обновляем README через Pull Request
       - name: Create README update branch
@@ -172,7 +172,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Update download links to ${{ steps.tag.outputs.new_tag }}"
-          branch: ${{ steps.readme-branch.outputs.branch_name }}
+          branch: update-readme/${{ steps.tag.outputs.new_tag }}   # новая ветка для PR
           title: "Update download links to ${{ steps.tag.outputs.new_tag }}"
           body: "Автоматическое обновление ссылок на последнюю версию DemoCIProject"
           base: main
