@@ -44,17 +44,28 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          # Берём последний тег или v0.0.0, если тегов нет
-          LAST_TAG=$(git describe --tags --abbrev=0 || echo "v0.0.0")
-          echo "Last tag: $LAST_TAG"
-          # Разбираем версию
-          IFS='.' read -r MAJOR MINOR PATCH <<< "${LAST_TAG#v}"
-          PATCH=$((PATCH + 1))
-          NEW_TAG="v$MAJOR.$MINOR.$PATCH"
-          echo "New tag: $NEW_TAG"
+  
+          # Берём последний тег или v0.0.0
+          $LAST_TAG = git describe --tags --abbrev=0
+          if (-not $LAST_TAG) { $LAST_TAG = "v0.0.0" }
+  
+          # Разбираем на числа
+          if ($LAST_TAG -match "v(\d+)\.(\d+)\.(\d+)") {
+              $MAJOR = [int]$Matches[1]
+              $MINOR = [int]$Matches[2]
+              $PATCH = [int]$Matches[3] + 1
+          } else {
+              $MAJOR = 0
+              $MINOR = 0
+              $PATCH = 1
+          }
+
+          $NEW_TAG = "v$MAJOR.$MINOR.$PATCH"
           git tag $NEW_TAG
           git push origin $NEW_TAG
-          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+          Write-Host "new_tag=$NEW_TAG" 
+          echo "new_tag=$NEW_TAG" >> $env:GITHUB_OUTPUT
+        shell: pwsh
 
       # 8. Создаём GitHub Release с exe
       - name: Create Release
