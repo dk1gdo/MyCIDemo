@@ -123,10 +123,10 @@ jobs:
         with:
           tag: ${{ steps.tag.outputs.new_tag }}
           name: Release ${{ steps.tag.outputs.new_tag }}
-          files: |
-            ./publish/win/*
-            ./publish/linux/*
-            ./publish/mac/*
+          artifacts: |
+            publish/linux/*
+            publish/mac/*
+            publish/win/*
 
       # Обновляем README через Pull Request
       - name: Create README update branch
