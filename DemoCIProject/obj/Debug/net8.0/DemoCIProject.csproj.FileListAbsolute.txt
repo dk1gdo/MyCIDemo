@@ -1,0 +1,14 @@
+/Users/denis/RiderProjects/DemoCIProject/DemoCIProject/bin/Debug/net8.0/DemoCIProject
+/Users/denis/RiderProjects/DemoCIProject/DemoCIProject/bin/Debug/net8.0/DemoCIProject.deps.json
+/Users/denis/RiderProjects/DemoCIProject/DemoCIProject/bin/Debug/net8.0/DemoCIProject.runtimeconfig.json
+/Users/denis/RiderProjects/DemoCIProject/DemoCIProject/bin/Debug/net8.0/DemoCIProject.dll
+/Users/denis/RiderProjects/DemoCIProject/DemoCIProject/bin/Debug/net8.0/DemoCIProject.pdb
+/Users/denis/RiderProjects/DemoCIProject/DemoCIProject/obj/Debug/net8.0/DemoCIProject.GeneratedMSBuildEditorConfig.editorconfig
+/Users/denis/RiderProjects/DemoCIProject/DemoCIProject/obj/Debug/net8.0/DemoCIProject.AssemblyInfoInputs.cache
+/Users/denis/RiderProjects/DemoCIProject/DemoCIProject/obj/Debug/net8.0/DemoCIProject.AssemblyInfo.cs
+/Users/denis/RiderProjects/DemoCIProject/DemoCIProject/obj/Debug/net8.0/DemoCIProject.csproj.CoreCompileInputs.cache
+/Users/denis/RiderProjects/DemoCIProject/DemoCIProject/obj/Debug/net8.0/DemoCIProject.dll
+/Users/denis/RiderProjects/DemoCIProject/DemoCIProject/obj/Debug/net8.0/refint/DemoCIProject.dll
+/Users/denis/RiderProjects/DemoCIProject/DemoCIProject/obj/Debug/net8.0/DemoCIProject.pdb
+/Users/denis/RiderProjects/DemoCIProject/DemoCIProject/obj/Debug/net8.0/DemoCIProject.genruntimeconfig.cache
+/Users/denis/RiderProjects/DemoCIProject/DemoCIProject/obj/Debug/net8.0/ref/DemoCIProject.dll
