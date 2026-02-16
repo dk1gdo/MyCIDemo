@@ -1,76 +1,150 @@
-name: Build and Release
+name: Cross-Platform Build & Release
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (например, 1.12.30)'
+        required: false
+        default: ''
 
 jobs:
-  build-and-release:
-    runs-on: windows-latest
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        include:
+          - os: windows-latest
+            rid: win-x64
+            ext: .exe
+          - os: ubuntu-latest
+            rid: linux-x64
+            ext: ''
+          - os: macos-latest
+            rid: osx-x64
+            ext: ''
 
     steps:
-      # 1. Клонируем репозиторий
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # нужно, чтобы получить все теги
+          fetch-depth: 0
 
-      # 2. Настраиваем .NET
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      # 3. Восстанавливаем зависимости
       - name: Restore
         run: dotnet restore
 
-      # 4. Строим проект
       - name: Build
         run: dotnet build --no-restore
 
-      # 5. Прогоняем тесты
       - name: Test
         run: dotnet test --no-build
 
-      # 6. Публикуем exe
-      - name: Publish exe
-        run: dotnet publish DemoCIProject/DemoCIProject.csproj -c Release -r win-x64 --self-contained true -o ./publish
-      
-      # 7. Автоматически создаём новый тег
-      - name: Create tag
+      - name: Publish
+        run: dotnet publish DemoCIProject/DemoCIProject.csproj -c Release -r ${{ matrix.rid }} --self-contained true -o ./publish
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: DemoCIProject-${{ matrix.rid }}
+          path: ./publish/*
+
+  release:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Определяем тег
+      - name: Determine tag
         id: tag
+        shell: pwsh
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-  
-          # Берём последний тег или v0.0.0
-          $LAST_TAG = git describe --tags --abbrev=0
-          if (-not $LAST_TAG) { $LAST_TAG = "v0.0.0" }
-  
-          # Разбираем на числа
-          if ($LAST_TAG -match "v(\d+)\.(\d+)\.(\d+)") {
-              $MAJOR = [int]$Matches[1]
-              $MINOR = [int]$Matches[2]
-              $PATCH = [int]$Matches[3] + 1
+
+          if (${{ github.event.inputs.version }} -ne '') {
+              $NEW_TAG = "v${{ github.event.inputs.version }}"
           } else {
-              $MAJOR = 0
-              $MINOR = 0
-              $PATCH = 1
+              $LAST_TAG = git describe --tags --abbrev=0
+              if (-not $LAST_TAG) { $LAST_TAG = "v0.0.0" }
+              if ($LAST_TAG -match "v(\d+)\.(\d+)\.(\d+)") {
+                  $MAJOR = [int]$Matches[1]
+                  $MINOR = [int]$Matches[2]
+                  $PATCH = [int]$Matches[3] + 1
+              } else {
+                  $MAJOR = 0
+                  $MINOR = 0
+                  $PATCH = 1
+              }
+              $NEW_TAG = "v$MAJOR.$MINOR.$PATCH"
           }
 
-          $NEW_TAG = "v$MAJOR.$MINOR.$PATCH"
           git tag $NEW_TAG
           git push origin $NEW_TAG
-          Write-Host "new_tag=$NEW_TAG" 
+          Write-Host "new_tag=$NEW_TAG"
           echo "new_tag=$NEW_TAG" >> $env:GITHUB_OUTPUT
-        shell: pwsh
 
-      # 8. Создаём GitHub Release с exe
+      # Скачиваем артефакты с билдов для всех платформ
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: DemoCIProject-win-x64
+          path: ./publish/win
+
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: DemoCIProject-linux-x64
+          path: ./publish/linux
+
+      - name: Download Mac artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: DemoCIProject-osx-x64
+          path: ./publish/mac
+
+      # Создаём Release с бинарниками всех платформ
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.tag.outputs.new_tag }}
           name: Release ${{ steps.tag.outputs.new_tag }}
-          files: ./publish/*
+          files: |
+            ./publish/win/*
+            ./publish/linux/*
+            ./publish/mac/*
+
+      # Обновляем README.md с ссылками на все платформы
+      - name: Update README
+        shell: pwsh
+        run: |
+          $repo = "${{ github.repository }}"
+          $tag = "${{ steps.tag.outputs.new_tag }}"
+          $readme = "README.md"
+
+          $links = @(
+            "[Windows](https://github.com/$repo/releases/download/$tag/DemoCIProject.exe)",
+            "[Linux](https://github.com/$repo/releases/download/$tag/DemoCIProject)",
+            "[Mac](https://github.com/$repo/releases/download/$tag/DemoCIProject)"
+          )
+
+          # Обновляем секцию с ссылками, заменяя старую
+          (Get-Content $readme) -replace '(https://github\.com/.*/releases/download/.*DemoCIProject(\.exe)?)', $links -join ' | ' | Set-Content $readme
+
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add $readme
+          git commit -m "Update download links to $tag" || Write-Host "No changes to commit"
+          git push
